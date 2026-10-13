@@ -1,5 +1,5 @@
 #import "MCAppDelegate.h"
-#import "MCWebViewController.h"
+#import "MCRootViewController.h"
 
 @implementation MCAppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -7,11 +7,9 @@
     (void)launchOptions;
 
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-
-    MCWebViewController *control = [MCWebViewController new];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:control];
+    MCRootViewController *root = [MCRootViewController new];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:root];
     self.window.rootViewController = nav;
-
     [self.window makeKeyAndVisible];
     return YES;
 }
