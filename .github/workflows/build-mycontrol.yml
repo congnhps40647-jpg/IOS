@@ -1,0 +1,82 @@
+name: Build MyControl DEB
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/MyControlStarter-src.tar.gz'
+      - '.github/workflows/build-mycontrol.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Theos
+        uses: waruhachi/theos-action@v2.6.3
+
+      - name: Extract source
+        run: |
+          rm -rf build-src
+          mkdir build-src
+          tar -xzf src/MyControlStarter-src.tar.gz -C build-src
+
+      - name: Build package
+        working-directory: build-src/MyControlStarter
+        run: |
+          make clean package FINALPACKAGE=1
+          ls -lah packages
+
+      - name: Publish package and APT metadata
+        run: |
+          set -e
+          mkdir -p debs
+          DEB=$(find build-src/MyControlStarter/packages -name '*.deb' -type f | head -1)
+          test -n "$DEB"
+          NAME=$(basename "$DEB")
+          cp "$DEB" "debs/$NAME"
+          SIZE=$(stat -f%z "debs/$NAME")
+          SHA256=$(shasum -a 256 "debs/$NAME" | awk '{print $1}')
+          cat > Packages <<EOF
+          Package: com.example.mycontrolstarter
+          Name: MyControl LAN
+          Version: 0.2.0
+          Architecture: iphoneos-arm64
+          Description: Local LAN web controller and Lua runner for jailbroken iOS research and app testing.
+          Maintainer: Local Developer
+          Author: Local Developer
+          Section: Development
+          Depends: firmware (>= 15.0)
+          Filename: debs/$NAME
+          Size: $SIZE
+          SHA256: $SHA256
+          EOF
+          gzip -c -9 Packages > Packages.gz
+          cat > Release <<EOF
+          Origin: MyControl IOS Repo
+          Label: MyControl IOS Repo
+          Suite: stable
+          Version: 1.0
+          Codename: ios
+          Architectures: iphoneos-arm iphoneos-arm64
+          Components: main
+          Description: Personal jailbreak package repository for MyControl
+          EOF
+
+      - name: Commit generated repo files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add debs Packages Packages.gz Release
+          if git diff --cached --quiet; then
+            echo 'No changes to publish.'
+            exit 0
+          fi
+          git commit -m "Build MyControl 0.2.0"
+          git push
