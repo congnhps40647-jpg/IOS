@@ -6,8 +6,8 @@ INSTALL_TARGET_PROCESSES = MyControl
 include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME = MyControl
-MyControl_FILES = main.m MCAppDelegate.m MCRootViewController.m MCWebViewController.m
-MyControl_FRAMEWORKS = UIKit WebKit
+MyControl_FILES = main.m MCAppDelegate.m MCRootViewController.m
+MyControl_FRAMEWORKS = UIKit
 MyControl_CFLAGS = -fobjc-arc -Wall -Wextra
 MyControl_RESOURCE_DIRS = Resources
 
