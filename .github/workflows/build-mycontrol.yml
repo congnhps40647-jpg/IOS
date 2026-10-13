@@ -1,6 +1,5 @@
 name: Build MyControl DEB
 
-# Triggered automatically when the source bundle or this workflow changes.
 on:
   workflow_dispatch:
   push:
@@ -27,6 +26,27 @@ jobs:
           rm -rf build-src
           mkdir build-src
           tar -xzf src/MyControlStarter-src.tar.gz -C build-src
+
+      - name: Patch source for current Clang
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('build-src/MyControlStarter/daemon/main.mm')
+          s = p.read_text()
+          if '(void)argc;' not in s:
+              s = s.replace('int main(int argc, char **argv) {\n    @autoreleasepool {',
+                            'int main(int argc, char **argv) {\n    (void)argc;\n    (void)argv;\n    @autoreleasepool {')
+          p.write_text(s)
+
+          p = Path('build-src/MyControlStarter/daemon/HTTPServer.mm')
+          s = p.read_text()
+          if '#include <string.h>' not in s:
+              s = s.replace('#include <unistd.h>', '#include <unistd.h>\n#include <string.h>')
+          s = s.replace('    struct sockaddr_in addr = {0};\n    addr.sin_family = AF_INET;',
+                        '    struct sockaddr_in addr;\n    memset(&addr, 0, sizeof(addr));\n    addr.sin_family = AF_INET;')
+          p.write_text(s)
+          PY
 
       - name: Build package
         working-directory: build-src/MyControlStarter
