@@ -1,0 +1,9 @@
+Package: com.example.mycontrolstarter
+Name: MyControl
+Version: 0.3.0
+Architecture: iphoneos-arm64
+Description: LAN web controller for jailbroken iOS with screenshot, tap/swipe, text input and Lua runner.
+Maintainer: Local Developer
+Author: Local Developer
+Section: Development
+Depends: firmware (>= 15.0)
