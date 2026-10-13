@@ -1,5 +1,6 @@
 name: Build MyControl DEB
 
+# Triggered automatically when the source bundle or this workflow changes.
 on:
   workflow_dispatch:
   push:
