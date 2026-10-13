@@ -1,0 +1,16 @@
+#!/bin/sh
+BASE=""
+[ -d /var/jb ] && BASE="/var/jb"
+PLIST="$BASE/Library/LaunchDaemons/com.example.mycontrold.plist"
+TOKEN_FILE="/var/mobile/Library/MyControl/token.txt"
+TOKEN="$(cat "$TOKEN_FILE" 2>/dev/null || true)"
+get_ip(){ if command -v ipconfig >/dev/null 2>&1; then ipconfig getifaddr en0 2>/dev/null && return 0; fi; if command -v ifconfig >/dev/null 2>&1; then ifconfig en0 2>/dev/null | awk '/inet / {print $2; exit}' && return 0; fi; return 1; }
+case "$1" in
+status) curl -fsS http://127.0.0.1:9999/api/status 2>/dev/null || echo "mycontrold not responding";;
+restart) launchctl bootout system/com.example.mycontrold >/dev/null 2>&1 || true; launchctl bootstrap system "$PLIST" >/dev/null 2>&1 || launchctl load "$PLIST" >/dev/null 2>&1 || true; echo "restarted";;
+token) [ -n "$TOKEN" ] && echo "$TOKEN" || echo "token not created yet";;
+ip) get_ip || echo "Unable to detect Wi-Fi IP";;
+url) IP="$(get_ip)"; if [ -n "$IP" ]; then if [ -n "$TOKEN" ]; then echo "http://$IP:9999/#$TOKEN"; else echo "http://$IP:9999/"; fi; else echo "Unable to detect Wi-Fi IP"; fi;;
+logs) tail -n 100 /var/mobile/Library/MyControl/mycontrold.log /var/mobile/Library/MyControl/mycontrold.err.log 2>/dev/null;;
+*) echo "usage: mycontrolctl {status|restart|token|ip|url|logs}"; exit 1;;
+esac
