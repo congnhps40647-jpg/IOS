@@ -1,12 +1,12 @@
 Package: com.example.mycontrolstarter
 Name: MyControl
-Version: 0.4.0
+Version: 0.4.1
 Architecture: iphoneos-arm64
-Description: Jailbroken iOS controller with native iPhone app, LAN dashboard, screen preview and Lua runner.
+Description: Jailbroken iOS controller with native iPhone app, screen preview and Lua editor/runner.
 Maintainer: Local Developer
 Author: Local Developer
 Section: Development
 Depends: firmware (>= 15.0)
-Filename: debs/com.example.mycontrolstarter_0.4.0_iphoneos-arm64.deb
-Size: 28112
-SHA256: c1320970797ca10200ed221e7807299c1c6baf40bbb9819ff8188a393fc652d4
+Filename: debs/com.example.mycontrolstarter_0.4.1_iphoneos-arm64.deb
+Size: 28100
+SHA256: 3da559f9a6e662e52a901e1487d6842c0b4335410895dea7313e345b272888b1
