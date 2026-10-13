@@ -8,5 +8,5 @@ Author: Local Developer
 Section: Development
 Depends: firmware (>= 15.0)
 Filename: debs/com.example.mycontrolstarter_0.4.0_iphoneos-arm64.deb
-Size: 25028
-SHA256: 7b42ee6ee1ccc3eb23f89bfdc39ffe962d470afcc14689540ff5da9fcf1451f5
+Size: 28112
+SHA256: c1320970797ca10200ed221e7807299c1c6baf40bbb9819ff8188a393fc652d4
