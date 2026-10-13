@@ -1,0 +1,6 @@
+#!/bin/sh
+BASE=""
+[ -d /var/jb ] && BASE="/var/jb"
+PLIST="$BASE/Library/LaunchDaemons/com.example.mycontrold.plist"
+launchctl bootout system/com.example.mycontrold >/dev/null 2>&1 || launchctl unload "$PLIST" >/dev/null 2>&1 || true
+exit 0
