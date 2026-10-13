@@ -8,6 +8,10 @@ on:
       - 'source/MyControlStarter/**'
       - '.github/workflows/build-mycontrol.yml'
 
+concurrency:
+  group: mycontrol-build
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
