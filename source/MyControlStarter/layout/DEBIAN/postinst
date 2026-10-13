@@ -11,5 +11,6 @@ if [ -d "$SHARE/scripts" ] && [ ! -e "$DATA/scripts/hello.lua" ]; then cp "$SHAR
 chown -R mobile:mobile "$DATA" 2>/dev/null || true
 launchctl bootout system/com.example.mycontrold >/dev/null 2>&1 || true
 launchctl bootstrap system "$PLIST" >/dev/null 2>&1 || launchctl load "$PLIST" >/dev/null 2>&1 || true
+if [ -x "$BASE/usr/bin/uicache" ]; then "$BASE/usr/bin/uicache" -a >/dev/null 2>&1 || true; else uicache -a >/dev/null 2>&1 || true; fi
 sleep 1
 exit 0
