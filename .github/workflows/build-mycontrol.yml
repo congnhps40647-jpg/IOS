@@ -51,9 +51,9 @@ jobs:
           cat > Packages <<EOF
           Package: com.example.mycontrolstarter
           Name: MyControl
-          Version: 0.4.0
+          Version: 0.4.1
           Architecture: iphoneos-arm64
-          Description: Jailbroken iOS controller with native iPhone app, LAN dashboard, screen preview and Lua runner.
+          Description: Jailbroken iOS controller with native iPhone app, screen preview and Lua editor/runner.
           Maintainer: Local Developer
           Author: Local Developer
           Section: Development
@@ -83,5 +83,5 @@ jobs:
             echo 'No changes to publish.'
             exit 0
           fi
-          git commit -m "Build MyControl 0.4.0"
+          git commit -m "Build MyControl 0.4.1"
           git push
