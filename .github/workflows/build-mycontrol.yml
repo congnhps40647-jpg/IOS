@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/MyControlStarter-src.tar.gz'
+      - 'source/MyControlStarter/**'
       - '.github/workflows/build-mycontrol.yml'
 
 permissions:
@@ -21,35 +21,14 @@ jobs:
       - name: Setup Theos
         uses: waruhachi/theos-action@v2.6.3
 
-      - name: Extract source
+      - name: Prepare package scripts
         run: |
-          rm -rf build-src
-          mkdir build-src
-          tar -xzf src/MyControlStarter-src.tar.gz -C build-src
-
-      - name: Patch source for current Clang
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path('build-src/MyControlStarter/daemon/main.mm')
-          s = p.read_text()
-          if '(void)argc;' not in s:
-              s = s.replace('int main(int argc, char **argv) {\n    @autoreleasepool {',
-                            'int main(int argc, char **argv) {\n    (void)argc;\n    (void)argv;\n    @autoreleasepool {')
-          p.write_text(s)
-
-          p = Path('build-src/MyControlStarter/daemon/HTTPServer.mm')
-          s = p.read_text()
-          if '#include <string.h>' not in s:
-              s = s.replace('#include <unistd.h>', '#include <unistd.h>\n#include <string.h>')
-          s = s.replace('    struct sockaddr_in addr = {0};\n    addr.sin_family = AF_INET;',
-                        '    struct sockaddr_in addr;\n    memset(&addr, 0, sizeof(addr));\n    addr.sin_family = AF_INET;')
-          p.write_text(s)
-          PY
+          chmod +x source/MyControlStarter/layout/DEBIAN/postinst || true
+          chmod +x source/MyControlStarter/layout/DEBIAN/prerm || true
+          chmod +x source/MyControlStarter/layout/usr/local/bin/mycontrolctl || true
 
       - name: Build package
-        working-directory: build-src/MyControlStarter
+        working-directory: source/MyControlStarter
         run: |
           make clean package FINALPACKAGE=1
           ls -lah packages
@@ -58,7 +37,8 @@ jobs:
         run: |
           set -e
           mkdir -p debs
-          DEB=$(find build-src/MyControlStarter/packages -name '*.deb' -type f | head -1)
+          rm -f debs/com.example.mycontrolstarter_*.deb
+          DEB=$(find source/MyControlStarter/packages -name '*.deb' -type f | head -1)
           test -n "$DEB"
           NAME=$(basename "$DEB")
           cp "$DEB" "debs/$NAME"
@@ -66,10 +46,10 @@ jobs:
           SHA256=$(shasum -a 256 "debs/$NAME" | awk '{print $1}')
           cat > Packages <<EOF
           Package: com.example.mycontrolstarter
-          Name: MyControl LAN
-          Version: 0.2.0
+          Name: MyControl
+          Version: 0.3.0
           Architecture: iphoneos-arm64
-          Description: Local LAN web controller and Lua runner for jailbroken iOS research and app testing.
+          Description: Jailbroken iOS LAN controller with screen preview and Lua runner.
           Maintainer: Local Developer
           Author: Local Developer
           Section: Development
@@ -99,5 +79,5 @@ jobs:
             echo 'No changes to publish.'
             exit 0
           fi
-          git commit -m "Build MyControl 0.2.0"
+          git commit -m "Build MyControl 0.3.0"
           git push
