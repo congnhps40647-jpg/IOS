@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+BASE=""
+[ -d /var/jb ] && BASE="/var/jb"
+PLIST="$BASE/Library/LaunchDaemons/com.example.mycontrold.plist"
+DATA="/var/mobile/Library/MyControl"
+SHARE="$BASE/usr/share/mycontrol"
+mkdir -p "$DATA/web" "$DATA/scripts" "$DATA/tmp" || true
+if [ -d "$SHARE/web" ]; then cp -R "$SHARE/web/." "$DATA/web/" || true; fi
+if [ -d "$SHARE/scripts" ] && [ ! -e "$DATA/scripts/hello.lua" ]; then cp "$SHARE/scripts/hello.lua" "$DATA/scripts/hello.lua" || true; fi
+chown -R mobile:mobile "$DATA" 2>/dev/null || true
+launchctl bootout system/com.example.mycontrold >/dev/null 2>&1 || true
+launchctl bootstrap system "$PLIST" >/dev/null 2>&1 || launchctl load "$PLIST" >/dev/null 2>&1 || true
+sleep 1
+exit 0
