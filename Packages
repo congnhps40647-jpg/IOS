@@ -1,12 +1,12 @@
 Package: com.example.mycontrolstarter
-Name: MyControl LAN
-Version: 0.2.0
+Name: MyControl
+Version: 0.3.0
 Architecture: iphoneos-arm64
-Description: Local LAN web controller and Lua runner for jailbroken iOS research and app testing.
+Description: Jailbroken iOS LAN controller with screen preview and Lua runner.
 Maintainer: Local Developer
 Author: Local Developer
 Section: Development
 Depends: firmware (>= 15.0)
-Filename: debs/com.example.mycontrolstarter_0.2.0_iphoneos-arm64.deb
-Size: 15142
-SHA256: cc2c3edccb5dd36f58d44c18642a0bca73e5dbb19e173d3b97b15f919b1a38ab
+Filename: debs/com.example.mycontrolstarter_0.3.0_iphoneos-arm64.deb
+Size: 17312
+SHA256: e44e5f2296e28cd0ac02f049e514dbb8ef475d68b41a4d85c8caf852c1f4f760
